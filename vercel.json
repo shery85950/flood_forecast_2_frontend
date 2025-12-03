@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/forecast",
+      "destination": "/pages/user/forecast.html"
+    },
+    {
+      "source": "/alerts",
+      "destination": "/pages/user/alerts.html"
+    },
+    {
+      "source": "/shelters",
+      "destination": "/pages/user/shelters.html"
+    },
+    {
+      "source": "/helpline",
+      "destination": "/pages/user/helpline.html"
+    },
+    {
+      "source": "/report",
+      "destination": "/pages/user/report.html"
+    },
+    {
+      "source": "/",
+      "destination": "/pages/user/index.html"
+    }
+  ]
+}
