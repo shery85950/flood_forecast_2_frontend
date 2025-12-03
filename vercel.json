@@ -1,29 +1,22 @@
 {
-  "version": 2,
+  "outputDirectory": "frontend",
+  "buildCommand": null,
+  "installCommand": null,
   "rewrites": [
-    {
-      "source": "/forecast",
-      "destination": "/pages/user/forecast.html"
-    },
-    {
-      "source": "/alerts",
-      "destination": "/pages/user/alerts.html"
-    },
-    {
-      "source": "/shelters",
-      "destination": "/pages/user/shelters.html"
-    },
-    {
-      "source": "/helpline",
-      "destination": "/pages/user/helpline.html"
-    },
-    {
-      "source": "/report",
-      "destination": "/pages/user/report.html"
-    },
-    {
-      "source": "/",
-      "destination": "/pages/user/index.html"
-    }
+    { "source": "/", "destination": "/pages/user/index.html" },
+    { "source": "/alerts", "destination": "/pages/user/alerts.html" },
+    { "source": "/forecast", "destination": "/pages/user/forecast.html" },
+    { "source": "/helpline", "destination": "/pages/user/helpline.html" },
+    { "source": "/shelters", "destination": "/pages/user/shelters.html" },
+    { "source": "/report", "destination": "/pages/user/report.html" },
+    { "source": "/about", "destination": "/pages/info/about.html" },
+    { "source": "/contact", "destination": "/pages/info/contact.html" },
+    { "source": "/faq", "destination": "/pages/info/faq.html" },
+    { "source": "/dashboard", "destination": "/pages/admin/dashboard.html" },
+    { "source": "/login", "destination": "/pages/admin/login.html" },
+    { "source": "/manage-alerts", "destination": "/pages/admin/manage-alerts.html" },
+    { "source": "/manage-helplines", "destination": "/pages/admin/manage-helplines.html" },
+    { "source": "/manage-shelters", "destination": "/pages/admin/manage-shelters.html" },
+    { "source": "/view-reports", "destination": "/pages/admin/view-reports.html" }
   ]
 }
