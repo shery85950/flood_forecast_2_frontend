@@ -5,7 +5,7 @@
  */
 
 const AI_CONFIG = {
-    BACKEND_API_URL: 'https://flood-forecast-backend-production.up.railway.app/api/ai/analyze',
+    BACKEND_API_URL: 'https://floodforecast2backend-production.up.railway.app/api/ai/analyze',
     WEATHER_API_KEY: '5523bf8add464255b93210055252911',
     WEATHER_API_BASE: 'https://api.weatherapi.com/v1'
 };
@@ -199,3 +199,4 @@ if (typeof module !== 'undefined' && module.exports) {
         getWarningIcon
     };
 }
+
