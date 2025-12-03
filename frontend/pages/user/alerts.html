@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerts - FloodResponse</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container.mt-4 {
+            flex: 1;
+        }
+
+        footer {
+            padding: 30px 0;
+            background-color: #343a40;
+            color: white;
+            margin-top: auto;
+        }
+
+        .copyright p {
+            font-size: 1.1rem;
+            margin: 0;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-water"></i>
+                    FloodResponse
+                </div>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/forecast">Forecasts</a></li>
+                    <li><a href="/alerts" class="active">Alerts</a></li>
+                    <li><a href="/shelters">Shelters</a></li>
+                    <li><a href="/helpline">Helpline</a></li>
+                    <li><a href="/report" class="btn btn-primary">Report Emergency</a></li>
+                </ul>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h1>Active Alerts</h1>
+            <p class="text-muted">Stay updated with the latest flood warnings and advisories.</p>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search alerts by region or keyword...">
+            <button class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active">All Alerts</button>
+            <button class="filter-btn">Critical</button>
+            <button class="filter-btn">Warning</button>
+            <button class="filter-btn">Advisory</button>
+        </div>
+
+        <div id="alerts-container">
+            <!-- Alerts will be loaded here dynamically -->
+            <div class="text-center py-5">
+                <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
+                <p class="mt-3">Loading alerts...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="copyright">
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/api.js"></script>
+    <script>
+        const alertsContainer = document.getElementById('alerts-container');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        let allAlerts = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAlerts();
+        });
+
+        async function fetchAlerts() {
+            try {
+                allAlerts = await api.getAlerts();
+                renderAlerts(allAlerts);
+            } catch (error) {
+                console.error('Error fetching alerts:', error);
+                alertsContainer.innerHTML = `
+                    <div class="text-center py-5 text-danger">
+                        <i class="fas fa-exclamation-triangle fa-3x"></i>
+                        <p class="mt-3">Failed to load alerts. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Date not available';
+            const date = new Date(dateString);
+            return isNaN(date.getTime()) ? 'Date not available' : date.toLocaleString();
+        }
+
+        function renderAlerts(alerts) {
+            if (alerts.length === 0) {
+                alertsContainer.innerHTML = `
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-check-circle fa-3x"></i>
+                        <p class="mt-3">No active alerts at the moment.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            alertsContainer.innerHTML = alerts.map(alert => `
+                <div class="card mb-3">
+                    <div style="border-left: 5px solid ${getSeverityColor(alert.severity)}; padding-left: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 style="color: ${getSeverityColor(alert.severity)};">
+                                    <i class="${getSeverityIcon(alert.severity)}"></i> ${alert.title}
+                                </h3>
+                                <p class="text-muted mb-1"><i class="fas fa-map-marker-alt"></i> ${alert.region}</p>
+                                <p class="text-muted"><small>Issued: ${formatDate(alert.timestamp)}</small></p>
+                            </div>
+                            <span class="alert-badge ${getSeverityBadgeClass(alert.severity)}">${alert.severity}</span>
+                        </div>
+                        <p class="mt-2">${alert.description}</p>
+                        ${alert.severity === 'Critical' ? `
+                        <div class="mt-2">
+                            <a href="/shelters" class="btn btn-sm btn-primary">Find Shelter</a>
+                        </div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getSeverityColor(severity) {
+            switch (severity) {
+                case 'Critical': return 'var(--danger-color)';
+                case 'Warning': return 'var(--warning-color)';
+                case 'Advisory': return 'var(--info-color)';
+                default: return '#6c757d';
+            }
+        }
+
+        function getSeverityIcon(severity) {
+            switch (severity) {
+                case 'Critical': return 'fas fa-exclamation-circle';
+                case 'Warning': return 'fas fa-exclamation-triangle';
+                case 'Advisory': return 'fas fa-info-circle';
+                default: return 'fas fa-bell';
+            }
+        }
+
+        function getSeverityBadgeClass(severity) {
+            switch (severity) {
+                case 'Critical': return 'alert-critical';
+                case 'Warning': return 'alert-warning';
+                case 'Advisory': return 'alert-info';
+                default: return 'alert-secondary';
+            }
+        }
+
+        // Filter functionality
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked
+                btn.classList.add('active');
+
+                const filter = btn.innerText;
+                if (filter === 'All Alerts') {
+                    renderAlerts(allAlerts);
+                } else {
+                    const filtered = allAlerts.filter(a => a.severity === filter);
+                    renderAlerts(filtered);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

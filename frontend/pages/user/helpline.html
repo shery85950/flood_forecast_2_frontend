@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Helpline - FloodResponse</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-water"></i>
+                    FloodResponse
+                </div>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/forecast">Forecasts</a></li>
+                    <li><a href="/alerts">Alerts</a></li>
+                    <li><a href="/shelters">Shelters</a></li>
+                    <li><a href="/helpline" class="active">Helpline</a></li>
+                    <li><a href="/report" class="btn btn-primary">Report Emergency</a></li>
+                </ul>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h1>Emergency Helpline Directory</h1>
+            <p class="text-muted">Contact emergency services and rescue teams immediately.</p>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search by city or service...">
+            <button class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active">All</button>
+            <button class="filter-btn">Rescue</button>
+            <button class="filter-btn">Medical</button>
+            <button class="filter-btn">Police</button>
+            <button class="filter-btn">NGOs</button>
+        </div>
+
+        <div class="card-grid" id="helplines-container">
+            <!-- Helplines will be loaded dynamically -->
+            <div class="text-center py-5" style="grid-column: 1 / -1;">
+                <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
+                <p class="mt-3">Loading helplines...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="copyright">
+                <p>&copy; 2025 Flood Forecasting & Response System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/api.js"></script>
+    <script>
+        const helplinesContainer = document.getElementById('helplines-container');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const searchInput = document.querySelector('.search-input');
+        let allHelplines = [];
+
+        // Fetch helplines on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchHelplines();
+        });
+
+        async function fetchHelplines() {
+            try {
+                allHelplines = await api.getHelplines();
+                renderHelplines(allHelplines);
+            } catch (error) {
+                console.error('Error fetching helplines:', error);
+                helplinesContainer.innerHTML = `
+                    <div class="text-center py-5 text-danger" style="grid-column: 1 / -1;">
+                        <i class="fas fa-exclamation-triangle fa-3x"></i>
+                        <p class="mt-3">Failed to load helplines. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderHelplines(helplines) {
+            if (helplines.length === 0) {
+                helplinesContainer.innerHTML = `
+                    <div class="text-center py-5 text-muted" style="grid-column: 1 / -1;">
+                        <i class="fas fa-phone-slash fa-3x"></i>
+                        <p class="mt-3">No helplines available at the moment.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            helplinesContainer.innerHTML = helplines.map(helpline => {
+                const iconClass = getIconClass(helpline.category);
+                const iconColor = getIconColor(helpline.category);
+
+                return `
+                    <div class="card text-center">
+                        <div class="card-icon"><i class="${iconClass} ${iconColor}"></i></div>
+                        <h3>${helpline.name}</h3>
+                        <p class="text-muted">${helpline.description || helpline.category}</p>
+                        <p class="text-muted"><small><i class="fas fa-map-marker-alt"></i> ${helpline.city}</small></p>
+                        <h2 class="text-primary mt-2">${helpline.phoneNumber}</h2>
+                        <a href="tel:${helpline.phoneNumber}" class="btn btn-success mt-3">
+                            <i class="fas fa-phone"></i> Call Now
+                        </a>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getIconClass(category) {
+            const icons = {
+                'Rescue': 'fas fa-ambulance',
+                'Medical': 'fas fa-hospital',
+                'Police': 'fas fa-shield-alt',
+                'NGOs': 'fas fa-hands-helping',
+                'Fire': 'fas fa-fire-extinguisher',
+                'Emergency': 'fas fa-exclamation-triangle'
+            };
+            return icons[category] || 'fas fa-phone-volume';
+        }
+
+        function getIconColor(category) {
+            const colors = {
+                'Rescue': 'text-danger',
+                'Medical': 'text-danger',
+                'Police': 'text-dark',
+                'NGOs': 'text-success',
+                'Fire': 'text-warning',
+                'Emergency': 'text-danger'
+            };
+            return colors[category] || 'text-primary';
+        }
+
+        // Filter functionality
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.innerText;
+                if (filter === 'All') {
+                    renderHelplines(allHelplines);
+                } else {
+                    const filtered = allHelplines.filter(h => h.category === filter);
+                    renderHelplines(filtered);
+                }
+            });
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allHelplines.filter(h =>
+                h.name.toLowerCase().includes(searchTerm) ||
+                h.city.toLowerCase().includes(searchTerm) ||
+                h.category.toLowerCase().includes(searchTerm) ||
+                (h.description && h.description.toLowerCase().includes(searchTerm))
+            );
+            renderHelplines(filtered);
+
+            // Reset filter buttons when searching
+            if (searchTerm) {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                filterBtns[0].classList.add('active'); // Activate "All"
+            }
+        });
+    </script>
+</body>
+
+</html>

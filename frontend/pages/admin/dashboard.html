@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - FloodResponse</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .loading-skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.3) 25%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.3) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .quick-action-btn {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-water"></i> Admin</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="/dashboard" class="active"><i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span></a></li>
+                <li><a href="/manage-alerts"><i class="fas fa-bell"></i> <span>Alerts</span></a></li>
+                <li><a href="/manage-shelters"><i class="fas fa-home"></i> <span>Shelters</span></a></li>
+                <li><a href="/manage-helplines"><i class="fas fa-phone"></i> <span>Helplines</span></a></li>
+                <li><a href="/view-reports"><i class="fas fa-file-alt"></i> <span>Reports</span></a></li>
+                <li><a href="/"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="admin-header">
+                <h2>Dashboard Overview</h2>
+                <div class="user-info">
+                    <span>Welcome, Admin</span>
+                    <i class="fas fa-user-circle fa-lg ml-2"></i>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="/manage-alerts" class="quick-action-btn">
+                    <i class="fas fa-bell fa-2x mb-2" style="color: var(--danger-color);"></i>
+                    <div>Create Alert</div>
+                </a>
+                <a href="/manage-shelters" class="quick-action-btn">
+                    <i class="fas fa-home fa-2x mb-2" style="color: var(--primary-color);"></i>
+                    <div>Add Shelter</div>
+                </a>
+                <a href="/manage-helplines" class="quick-action-btn">
+                    <i class="fas fa-phone fa-2x mb-2" style="color: var(--success-color);"></i>
+                    <div>Add Helpline</div>
+                </a>
+                <a href="/view-reports" class="quick-action-btn">
+                    <i class="fas fa-file-alt fa-2x mb-2" style="color: var(--warning-color);"></i>
+                    <div>View Reports</div>
+                </a>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="stat-info">
+                        <h3 id="stat-alerts"
+                            style="color: white; font-size: 2.5rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            <div class="loading-skeleton" style="width: 60px; height: 40px; border-radius: 4px;"></div>
+                        </h3>
+                        <p style="color: white; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">Active Alerts
+                        </p>
+                    </div>
+                    <div class="stat-icon" style="color: rgba(255,255,255,0.3);">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="stat-info">
+                        <h3 id="stat-reports"
+                            style="color: white; font-size: 2.5rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            <div class="loading-skeleton" style="width: 60px; height: 40px; border-radius: 4px;"></div>
+                        </h3>
+                        <p style="color: white; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">Pending
+                            Reports</p>
+                    </div>
+                    <div class="stat-icon" style="color: rgba(255,255,255,0.3);">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <div class="stat-info">
+                        <h3 id="stat-shelters"
+                            style="color: white; font-size: 2.5rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            <div class="loading-skeleton" style="width: 60px; height: 40px; border-radius: 4px;"></div>
+                        </h3>
+                        <p style="color: white; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">Active
+                            Shelters</p>
+                    </div>
+                    <div class="stat-icon" style="color: rgba(255,255,255,0.3);">
+                        <i class="fas fa-home"></i>
+                    </div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <div class="stat-info">
+                        <h3 id="stat-helplines"
+                            style="color: white; font-size: 2.5rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            <div class="loading-skeleton" style="width: 60px; height: 40px; border-radius: 4px;"></div>
+                        </h3>
+                        <p style="color: white; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">Available
+                            Helplines</p>
+                    </div>
+                    <div class="stat-icon" style="color: rgba(255,255,255,0.3);">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Reports -->
+            <div class="card mb-4">
+                <div class="card-header"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3>Recent Emergency Reports</h3>
+                    <a href="/view-reports" class="btn btn-sm btn-outline"
+                        style="color: var(--primary-color); border-color: var(--primary-color);">View All</a>
+                </div>
+                <div class="table-container" style="box-shadow: none; padding: 0;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Reporter</th>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reports-table-body">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px;">
+                                    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                                    <p class="mt-2">Loading reports...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Critical Alerts -->
+            <div class="card">
+                <div class="card-header" style="margin-bottom: 20px;">
+                    <h3><i class="fas fa-exclamation-triangle text-danger"></i> Critical Alerts</h3>
+                </div>
+                <div id="critical-alerts-container">
+                    <div style="text-align: center; padding: 20px;">
+                        <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                        <p class="mt-2">Loading critical alerts...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/api.js"></script>
+    <script>
+        // Fetch and display statistics
+        async function loadStatistics() {
+            try {
+                const [alerts, reports, shelters, helplines] = await Promise.all([
+                    api.getAlerts(),
+                    api.getReports(),
+                    api.getShelters(),
+                    api.getHelplines()
+                ]);
+
+                document.getElementById('stat-alerts').textContent = alerts.length;
+                document.getElementById('stat-reports').textContent = reports.filter(r => r.status === 'Pending').length;
+                document.getElementById('stat-shelters').textContent = shelters.length;
+                document.getElementById('stat-helplines').textContent = helplines.length;
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+                document.getElementById('stat-alerts').textContent = '0';
+                document.getElementById('stat-reports').textContent = '0';
+                document.getElementById('stat-shelters').textContent = '0';
+                document.getElementById('stat-helplines').textContent = '0';
+            }
+        }
+
+        async function loadRecentReports() {
+            try {
+                const reports = await api.getReports();
+                const recentReports = reports.slice(0, 5);
+                const tbody = document.getElementById('reports-table-body');
+
+                if (recentReports.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px;">
+                                <i class="fas fa-inbox fa-2x text-muted"></i>
+                                <p class="mt-2">No reports available</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = recentReports.map(report => {
+                    const statusClass = getStatusClass(report.status);
+                    const timeAgo = getTimeAgo(report.reportedAt);
+
+                    return `
+                        <tr>
+                            <td>#${report.id}</td>
+                            <td>${report.reporterName}</td>
+                            <td>${report.emergencyType}</td>
+                            <td>${report.location}</td>
+                            <td>${timeAgo}</td>
+                            <td><span class="alert-badge ${statusClass}">${report.status}</span></td>
+                            <td><a href="view-reports.html" class="action-btn btn-edit">View</a></td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                document.getElementById('reports-table-body').innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--danger-color);">
+                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                            <p class="mt-2">Failed to load reports</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        async function loadCriticalAlerts() {
+            try {
+                const alerts = await api.getAlerts();
+                const criticalAlerts = alerts.filter(a => a.severity === 'Critical').slice(0, 3);
+                const container = document.getElementById('critical-alerts-container');
+
+                if (criticalAlerts.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: var(--success-color);">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                            <p class="mt-2">No critical alerts at the moment</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = criticalAlerts.map(alert => `
+                    <div style="padding: 15px; border-left: 4px solid var(--danger-color); margin-bottom: 15px; background: #fff5f5; border-radius: 4px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <h4 style="color: var(--danger-color); margin-bottom: 5px;">
+                                    <i class="fas fa-exclamation-triangle"></i> ${alert.title}
+                                </h4>
+                                <p style="margin: 5px 0; color: #666;">
+                                    <i class="fas fa-map-marker-alt"></i> ${alert.region}
+                                </p>
+                                <p style="margin: 5px 0; font-size: 0.9rem;">${alert.description}</p>
+                            </div>
+                            <span class="alert-badge alert-critical">${alert.severity}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading critical alerts:', error);
+                document.getElementById('critical-alerts-container').innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--danger-color);">
+                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                        <p class="mt-2">Failed to load critical alerts</p>
+                    </div>
+                `;
+            }
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                'Pending': 'alert-warning',
+                'In Progress': 'alert-info',
+                'Resolved': 'alert-success',
+                'Critical': 'alert-critical'
+            };
+            return classes[status] || 'alert-secondary';
+        }
+
+        function getTimeAgo(timestamp) {
+            if (!timestamp) return 'Unknown';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
+            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            return date.toLocaleDateString();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStatistics();
+            loadRecentReports();
+            loadCriticalAlerts();
+        });
+    </script>
+</body>
+
+</html>
