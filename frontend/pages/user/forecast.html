@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -48,95 +48,133 @@
             padding: 30px;
             border-radius: 12px;
             margin-bottom: 30px;
+        }
 
-/* AI Forecast Styles */
-.ai-analysis-card {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-    border-radius: 12px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 8px 30px rgba(245, 87, 108, 0.3);
-    animation: slideIn 0.5s ease-out;
-}
+        /* AI Forecast Styles */
+        .ai-analysis-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 30px rgba(245, 87, 108, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
 
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
 
-.warning-badge {
-    display: inline-block;
-    padding: 10px 20px;
-    border-radius: 25px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin: 10px 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-.warning-Low { background: linear-gradient(135deg, #11998e, #38ef7d); }
-.warning-Moderate { background: linear-gradient(135deg, #f2994a, #f2c94c); }
-.warning-High { background: linear-gradient(135deg, #eb3349, #f45c43); }
-.warning-Critical {
-    background: linear-gradient(135deg, #c21500, #ffc500);
-    animation: pulse 2s infinite;
-}
+        .warning-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
+        .warning-Low {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+        }
 
-.risk-score-circle {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    margin: 0 auto;
-    border: 4px solid white;
-}
+        .warning-Moderate {
+            background: linear-gradient(135deg, #f2994a, #f2c94c);
+        }
 
-.risk-score-number { font-size: 2.5rem; font-weight: 700; }
+        .warning-High {
+            background: linear-gradient(135deg, #eb3349, #f45c43);
+        }
 
-.daily-risk-card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    padding: 15px;
-    margin: 10px 0;
-    border-left: 4px solid white;
-    transition: all 0.3s ease;
-}
+        .warning-Critical {
+            background: linear-gradient(135deg, #c21500, #ffc500);
+            animation: pulse 2s infinite;
+        }
 
-.daily-risk-card:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateX(5px);
-}
+        @keyframes pulse {
 
-.risk-Low { border-left-color: #38ef7d !important; }
-.risk-Moderate { border-left-color: #f2c94c !important; }
-.risk-High { border-left-color: #f45c43 !important; }
-.risk-Critical { border-left-color: #ffc500 !important; }
+            0%,
+            100% {
+                transform: scale(1);
+            }
 
-.recommendation-item {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 12px 15px;
-    border-radius: 8px;
-    margin: 8px 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+            50% {
+                transform: scale(1.05);
+            }
+        }
 
-.recommendation-item i { font-size: 1.2rem; }
+        .risk-score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin: 0 auto;
+            border: 4px solid white;
+        }
 
+        .risk-score-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .daily-risk-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid white;
+            transition: all 0.3s ease;
+        }
+
+        .daily-risk-card:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(5px);
+        }
+
+        .risk-Low {
+            border-left-color: #38ef7d !important;
+        }
+
+        .risk-Moderate {
+            border-left-color: #f2c94c !important;
+        }
+
+        .risk-High {
+            border-left-color: #f45c43 !important;
+        }
+
+        .risk-Critical {
+            border-left-color: #ffc500 !important;
+        }
+
+        .recommendation-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recommendation-item i {
+            font-size: 1.2rem;
         }
     </style>
 </head>
@@ -184,11 +222,11 @@
                 <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
                 <p class="mt-3">Loading current weather...</p>
             </div>
+        </div>
 
         <!-- AI Forecast Analysis -->
         <div id="ai-forecast-analysis" class="mb-4">
             <!-- AI analysis will load here -->
-        </div>
         </div>
 
         <!-- 3-Day Forecast -->
@@ -230,7 +268,8 @@
     </footer>
 
     <script src="../../js/utils.js"></script>
-    <script src="../../js/api.js"></script>`r`n    <script src="../../js/ai_agent.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/ai_agent.js"></script>
     <script>
         const WEATHER_API_KEY = '5523bf8add464255b93210055252911';
         const WEATHER_API_BASE = 'https://api.weatherapi.com/v1';
@@ -302,7 +341,7 @@
                     <div class="text-center">
                         <h3 style="color: white; margin-bottom: 20px;">Current Weather</h3>
                         <img src="https:${current.condition.icon}" alt="${current.condition.text}" style="width: 100px; height: 100px;">
-                        <div class="temp-large" style="color: white;">${Math.round(current.temp_c)}Â°C</div>
+                        <div class="temp-large" style="color: white;">${Math.round(current.temp_c)}°C</div>
                         <p style="font-size: 1.2rem; margin: 10px 0;">${current.condition.text}</p>
                         <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap;">
                             <div><i class="fas fa-tint"></i> Humidity<br><strong style="font-size: 1.3rem;">${current.humidity}%</strong></div>
@@ -326,8 +365,8 @@
                         <h4 style="color: #667eea; font-weight: 600;">${date.toLocaleDateString('en-US', { weekday: 'short' })}</h4>
                         <p class="text-muted" style="font-size: 0.9rem;">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
                         <img src="https:${day.day.condition.icon}" alt="${day.day.condition.text}" style="width: 80px; height: 80px; margin: 10px 0;">
-                        <div class="temp-large">${Math.round(day.day.avgtemp_c)}Â°C</div>
-                        <p style="color: #999; font-size: 0.9rem; margin: 5px 0;">${Math.round(day.day.mintemp_c)}Â° / ${Math.round(day.day.maxtemp_c)}Â°</p>
+                        <div class="temp-large">${Math.round(day.day.avgtemp_c)}°C</div>
+                        <p style="color: #999; font-size: 0.9rem; margin: 5px 0;">${Math.round(day.day.mintemp_c)}° / ${Math.round(day.day.maxtemp_c)}°</p>
                         <p style="color: #666; margin: 10px 0;">${day.day.condition.text}</p>
                         ${rainMm > 0 || rainChance > 30 ? `
                             <div class="rain-indicator">
@@ -427,10 +466,10 @@
         });
 
 
-// AI Forecast Analysis Functions
-async function loadAIForecast() {
-    const container = document.getElementById('ai-forecast-analysis');
-    container.innerHTML = `
+        // AI Forecast Analysis Functions
+        async function loadAIForecast() {
+            const container = document.getElementById('ai-forecast-analysis');
+            container.innerHTML = `
         <div class="ai-analysis-card text-center">
             <h3><i class="fas fa-robot"></i> AI Flood Risk Analysis</h3>
             <p style="margin-top: 15px;"><i class="fas fa-spinner fa-spin fa-2x"></i></p>
@@ -438,13 +477,13 @@ async function loadAIForecast() {
         </div>
     `;
 
-    try {
-        const result = await analyzeWeeklyForecast(userLocation);
-        if (!result.success) throw new Error(result.error || 'Analysis failed');
-        displayAIAnalysis(result);
-    } catch (error) {
-        console.error('[Forecast] AI error:', error);
-        container.innerHTML = `
+            try {
+                const result = await analyzeWeeklyForecast(userLocation);
+                if (!result.success) throw new Error(result.error || 'Analysis failed');
+                displayAIAnalysis(result);
+            } catch (error) {
+                console.error('[Forecast] AI error:', error);
+                container.innerHTML = `
             <div class="card" style="border-left: 4px solid #f39c12;">
                 <div class="text-center py-3">
                     <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
@@ -456,15 +495,15 @@ async function loadAIForecast() {
                 </div>
             </div>
         `;
-    }
-}
+            }
+        }
 
-function displayAIAnalysis(result) {
-    const { analysis, location } = result;
-    const container = document.getElementById('ai-forecast-analysis');
+        function displayAIAnalysis(result) {
+            const { analysis, location } = result;
+            const container = document.getElementById('ai-forecast-analysis');
 
-    const dailyRisksHTML = analysis.dailyRisks?.length > 0
-        ? analysis.dailyRisks.map(day => `
+            const dailyRisksHTML = analysis.dailyRisks?.length > 0
+                ? analysis.dailyRisks.map(day => `
             <div class="daily-risk-card risk-${day.risk}">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -475,22 +514,22 @@ function displayAIAnalysis(result) {
                 </div>
             </div>
         `).join('')
-        : '<p style="opacity: 0.8;">Daily risk breakdown not available</p>';
+                : '<p style="opacity: 0.8;">Daily risk breakdown not available</p>';
 
-    const recommendationsHTML = analysis.recommendations?.length > 0
-        ? analysis.recommendations.map(rec => `
+            const recommendationsHTML = analysis.recommendations?.length > 0
+                ? analysis.recommendations.map(rec => `
             <div class="recommendation-item">
                 <i class="fas fa-check-circle"></i>
                 <span>${rec}</span>
             </div>
         `).join('')
-        : '<p style="opacity: 0.8;">No specific recommendations</p>';
+                : '<p style="opacity: 0.8;">No specific recommendations</p>';
 
-    const keyFactorsHTML = analysis.keyFactors?.length > 0
-        ? analysis.keyFactors.map(f => `<li style="margin: 5px 0;">${f}</li>`).join('')
-        : '<li>No specific factors identified</li>';
+            const keyFactorsHTML = analysis.keyFactors?.length > 0
+                ? analysis.keyFactors.map(f => `<li style="margin: 5px 0;">${f}</li>`).join('')
+                : '<li>No specific factors identified</li>';
 
-    container.innerHTML = `
+            container.innerHTML = `
         <div class="ai-analysis-card">
             <div class="text-center mb-4">
                 <h3 style="color: white; margin-bottom: 10px;">
@@ -551,7 +590,7 @@ function displayAIAnalysis(result) {
             ` : ''}
         </div>
     `;
-}
+        }
 
 
         document.addEventListener('DOMContentLoaded', () => {
