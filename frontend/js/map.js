@@ -115,8 +115,17 @@ const mapUtils = {
         }
 
         try {
+            // Add Pakistan context to improve local results
+            const searchQuery = `${query}, Pakistan`;
+
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`
+                `https://nominatim.openstreetmap.org/search?` +
+                `format=json&` +
+                `q=${encodeURIComponent(searchQuery)}&` +
+                `limit=15&` +  // Increased from 5 to 15 for more results
+                `addressdetails=1&` +
+                `countrycodes=pk&` +  // Prioritize Pakistan results
+                `featuretype=city,town,village,suburb,neighbourhood`  // Focus on populated places
             );
 
             if (!response.ok) {
@@ -124,11 +133,31 @@ const mapUtils = {
             }
 
             const data = await response.json();
-            return data.map(item => ({
-                name: item.display_name,
-                lat: parseFloat(item.lat),
-                lng: parseFloat(item.lon)
-            }));
+
+            // Format and deduplicate results
+            const uniqueResults = [];
+            const seen = new Set();
+
+            data.forEach(item => {
+                // Create a simpler display name for better readability
+                const parts = item.display_name.split(',');
+                let simpleName = parts.slice(0, 3).join(','); // Take first 3 parts
+
+                // Avoid duplicates
+                const key = `${item.lat},${item.lon}`;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    uniqueResults.push({
+                        name: simpleName.trim(),
+                        fullName: item.display_name,
+                        lat: parseFloat(item.lat),
+                        lng: parseFloat(item.lon),
+                        type: item.type || 'location'
+                    });
+                }
+            });
+
+            return uniqueResults;
         } catch (error) {
             console.error('Error fetching suggestions:', error);
             return [];
