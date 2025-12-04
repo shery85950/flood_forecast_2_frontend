@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://floodforecast2backend-production.up.railway.app';
+const API_BASE_URL = 'https://floodforecast2backend-production.up.railway.app/api';
 
 const api = {
     // Alerts
@@ -118,5 +118,6 @@ const api = {
         return response.json();
     }
 };
+
 
 
