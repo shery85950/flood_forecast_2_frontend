@@ -25,7 +25,6 @@ const CITY_RIVER_MAPPING = {
 };
 
 // River danger levels (in meters - thresholds based on IRSA historical data)
-// Tarbela data reference: Current range 1493-1501, Dead level: 1050, FSD level: ~1550
 const RIVER_DANGER_LEVELS = {
     'TARBELA': { 
         low: 1480,           // Normal operating level
@@ -78,6 +77,43 @@ async function loadRiverData() {
         console.warn('[River Data] Error loading river data:', error);
         return null;
     }
+}
+
+/**
+ * Extract city name from location string or determine from coordinates
+ * @param {string} location - Location (coordinates or city name)
+ * @returns {string} City name
+ */
+function extractCityName(location) {
+    // If it's coordinates, determine city based on coordinates
+    if (location.includes(',')) {
+        const [lat, lon] = location.split(',').map(parseFloat);
+        
+        // Rawalpindi coordinates: 33.6131, 73.0729
+        if (lat > 33.5 && lat < 33.7 && lon > 73.0 && lon < 73.2) {
+            console.log('[Location] Coordinates identified as Rawalpindi');
+            return 'Rawalpindi';
+        }
+        // Islamabad coordinates: 33.7298, 73.1786
+        if (lat > 33.6 && lat < 33.8 && lon > 73.0 && lon < 73.3) {
+            console.log('[Location] Coordinates identified as Islamabad');
+            return 'Islamabad';
+        }
+        // Lahore coordinates: 31.5204, 74.3587
+        if (lat > 31.4 && lat < 31.7 && lon > 74.2 && lon < 74.5) {
+            console.log('[Location] Coordinates identified as Lahore');
+            return 'Lahore';
+        }
+        // Karachi coordinates: 24.8607, 67.0011
+        if (lat > 24.7 && lat < 25.0 && lon > 66.9 && lon < 67.2) {
+            console.log('[Location] Coordinates identified as Karachi');
+            return 'Karachi';
+        }
+        
+        console.warn('[Location] Coordinates not matched to any city, using Rawalpindi as default');
+        return 'Rawalpindi'; // Default to Rawalpindi
+    }
+    return location;
 }
 
 /**
@@ -161,43 +197,6 @@ function assessRiverRisk(barrage, currentLevel) {
     }
     
     return { riskLevel, score, reason };
-}
-
-/**
- * Extract city name from location string or determine from coordinates
- * @param {string} location - Location (coordinates or city name)
- * @returns {string} City name
- */
-function extractCityName(location) {
-    // If it's coordinates, determine city based on coordinates
-    if (location.includes(',')) {
-        const [lat, lon] = location.split(',').map(parseFloat);
-        
-        // Rawalpindi coordinates: 33.6131, 73.0729
-        if (lat > 33.5 && lat < 33.7 && lon > 73.0 && lon < 73.2) {
-            console.log('[Location] Coordinates identified as Rawalpindi');
-            return 'Rawalpindi';
-        }
-        // Islamabad coordinates: 33.7298, 73.1786
-        if (lat > 33.6 && lat < 33.8 && lon > 73.0 && lon < 73.3) {
-            console.log('[Location] Coordinates identified as Islamabad');
-            return 'Islamabad';
-        }
-        // Lahore coordinates: 31.5204, 74.3587
-        if (lat > 31.4 && lat < 31.7 && lon > 74.2 && lon < 74.5) {
-            console.log('[Location] Coordinates identified as Lahore');
-            return 'Lahore';
-        }
-        // Karachi coordinates: 24.8607, 67.0011
-        if (lat > 24.7 && lat < 25.0 && lon > 66.9 && lon < 67.2) {
-            console.log('[Location] Coordinates identified as Karachi');
-            return 'Karachi';
-        }
-        
-        console.warn('[Location] Coordinates not matched to any city, using Rawalpindi as default');
-        return 'Rawalpindi'; // Default to Rawalpindi
-    }
-    return location;
 }
 
 /**
@@ -443,6 +442,21 @@ function parseAIResponse(response) {
 }
 
 /**
+ * Get gradient color for warning level
+ * @param {string} level - Warning level
+ * @returns {string} CSS gradient
+ */
+function getWarningGradient(level) {
+    const gradients = {
+        'Low': 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+        'Moderate': 'linear-gradient(135deg, #f2994a 0%, #f2c94c 100%)',
+        'High': 'linear-gradient(135deg, #eb3349 0%, #f45c43 100%)',
+        'Critical': 'linear-gradient(135deg, #c21500 0%, #ffc500 100%)'
+    };
+    return gradients[level] || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+}
+
+/**
  * Get color class for warning level
  * @param {string} level - Warning level
  * @returns {string} CSS class name
@@ -478,6 +492,7 @@ if (typeof module !== 'undefined' && module.exports) {
         analyzeWeeklyForecast,
         getWarningColor,
         getWarningIcon,
+        getWarningGradient,
         loadRiverData,
         CITY_RIVER_MAPPING,
         RIVER_DANGER_LEVELS
