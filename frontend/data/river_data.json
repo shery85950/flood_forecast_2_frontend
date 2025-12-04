@@ -4,7 +4,7 @@
         "date": "04.12.2025",
         "stations": {
             "INDUS RIVER SYSTEM AUTHORITY": {
-                "TARBELA_LEVEL": 1520,
+                "TARBELA_LEVEL": 50000,
                 "TARBELA_MEAN_DISCHARGE": 7300.0,
                 "TARBELA_DEAD_LEVEL": 1050.0,
                 "TARBELA_MEAN_INFLOW": 4900.0,
