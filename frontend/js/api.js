@@ -54,6 +54,12 @@ const api = {
             method: 'DELETE'
         });
     },
+    updateShelterCapacity: async (id, change) => {
+        const response = await fetch(`${API_BASE_URL}/shelters/${id}/capacity?change=${change}`, {
+            method: 'PATCH'
+        });
+        return response.json();
+    },
 
     // Forecasts
     getForecasts: async () => {
