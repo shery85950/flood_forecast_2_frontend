@@ -100,24 +100,21 @@ const api = {
 
     // Weekly Reports
     getLatestWeeklyReports: async () => {
-        const response = await fetch(`${API_BASE_URL}/api/weekly-reports/latest`);
+        const response = await fetch(`${API_BASE_URL}/weekly-reports/latest`);
         return response.json();
     },
     getWeeklyReportsByWeek: async (weekStartDate) => {
-        const response = await fetch(`${API_BASE_URL}/api/weekly-reports/week/${weekStartDate}`);
+        const response = await fetch(`${API_BASE_URL}/weekly-reports/week/${weekStartDate}`);
         return response.json();
     },
     getProvinceReports: async (province) => {
-        const response = await fetch(`${API_BASE_URL}/api/weekly-reports/province/${province}`);
+        const response = await fetch(`${API_BASE_URL}/weekly-reports/province/${province}`);
         return response.json();
     },
     generateWeeklyReports: async () => {
-        const response = await fetch(`${API_BASE_URL}/api/weekly-reports/generate`, {
+        const response = await fetch(`${API_BASE_URL}/weekly-reports/generate`, {
             method: 'POST'
         });
         return response.json();
     }
 };
-
-
-
