@@ -88,22 +88,24 @@ async function loadRiverData() {
 function getLatestRiverLevel(barrage) {
     if (!riverData || riverData.length === 0) return null;
     
-    // Find latest daily data entry
-    for (let i = 0; i < riverData.length; i++) {
-        const entry = riverData[i];
-        if (entry.stations && entry.stations['INDUS RIVER SYSTEM AUTHORITY']) {
-            const stationData = entry.stations['INDUS RIVER SYSTEM AUTHORITY'];
-            
-            // Match barrage in the data
-            if (stationData['INDUS@TARBELA KABUL@NOWSHERA\nLEVEL'] && barrage === 'TARBELA') {
-                return {
-                    date: entry.date,
-                    level: stationData['INDUS@TARBELA KABUL@NOWSHERA\nLEVEL'],
-                    inflow: stationData['MEANINFLOW'],
-                    outflow: stationData['MEANOUTFLOW'],
-                    barrage: 'TARBELA'
-                };
-            }
+    // Find latest daily data entry (first entry is most recent)
+    const entry = riverData[0];
+    if (entry.stations && entry.stations['INDUS RIVER SYSTEM AUTHORITY']) {
+        const stationData = entry.stations['INDUS RIVER SYSTEM AUTHORITY'];
+        
+        // Get level based on barrage
+        const levelKey = `${barrage}_LEVEL`;
+        const inflowKey = `${barrage}_MEAN_INFLOW`;
+        const outflowKey = `${barrage}_MEAN_OUTFLOW`;
+        
+        if (stationData[levelKey]) {
+            return {
+                date: entry.date,
+                level: stationData[levelKey],
+                inflow: stationData[inflowKey] || 'N/A',
+                outflow: stationData[outflowKey] || 'N/A',
+                barrage: barrage
+            };
         }
     }
     return null;
