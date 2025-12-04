@@ -52,12 +52,11 @@
 
         /* AI Forecast Styles */
         .ai-analysis-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
             border-radius: 12px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 30px rgba(245, 87, 108, 0.3);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
             animation: slideIn 0.5s ease-out;
         }
 
@@ -274,7 +273,7 @@
         const WEATHER_API_KEY = '5523bf8add464255b93210055252911';
         const WEATHER_API_BASE = 'https://api.weatherapi.com/v1';
         let userLocation = 'Lahore';
-        let locationResolved = false; // Flag to track if location has been resolved
+        let locationResolved = false;
 
         function getUserLocation() {
             if (navigator.geolocation) {
@@ -282,7 +281,7 @@
                     console.log('[Location] Timeout - using default location:', userLocation);
                     locationResolved = true;
                     initializeAllData();
-                }, 5000); // Increased timeout to 5 seconds
+                }, 5000);
 
                 navigator.geolocation.getCurrentPosition(
                     position => {
@@ -307,12 +306,11 @@
             }
         }
 
-        // Main initialization function - called ONLY after location is resolved
         function initializeAllData() {
             console.log('[Init] Starting data initialization with location:', userLocation);
             fetchWeatherData(userLocation);
             fetchDbForecasts();
-            loadAIForecast(userLocation); // Pass location explicitly
+            loadAIForecast(userLocation);
         }
 
         async function fetchWeatherData(location) {
@@ -396,7 +394,6 @@
             }).join('');
         }
 
-        // Database forecasts
         const filterBtns = document.querySelectorAll('.filter-btn');
         let allDbForecasts = [];
 
@@ -483,12 +480,10 @@
             });
         });
 
-
-        // AI Forecast Analysis Functions - NOW ACCEPTS LOCATION PARAMETER
         async function loadAIForecast(location) {
             const container = document.getElementById('ai-forecast-analysis');
             container.innerHTML = `
-        <div class="ai-analysis-card text-center">
+        <div class="ai-analysis-card text-center" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
             <h3><i class="fas fa-robot"></i> AI Flood Risk Analysis</h3>
             <p style="margin-top: 15px;"><i class="fas fa-spinner fa-spin fa-2x"></i></p>
             <p style="margin-top: 10px; opacity: 0.9;">Analyzing 7-day forecast...</p>
@@ -496,7 +491,6 @@
     `;
 
             try {
-                console.log('[AI Forecast] Loading forecast for location:', location);
                 const result = await analyzeWeeklyForecast(location);
                 if (!result.success) throw new Error(result.error || 'Analysis failed');
                 displayAIAnalysis(result);
@@ -520,6 +514,8 @@
         function displayAIAnalysis(result) {
             const { analysis, location } = result;
             const container = document.getElementById('ai-forecast-analysis');
+            
+            const gradient = getWarningGradient(analysis.warningLevel);
 
             const dailyRisksHTML = analysis.dailyRisks?.length > 0
                 ? analysis.dailyRisks.map(day => `
@@ -538,7 +534,6 @@
             const recommendationsHTML = analysis.recommendations?.length > 0
                 ? analysis.recommendations.map(rec => `
             <div class="recommendation-item">
-                <i class="fas fa-check-circle"></i>
                 <span>${rec}</span>
             </div>
         `).join('')
@@ -549,7 +544,7 @@
                 : '<li>No specific factors identified</li>';
 
             container.innerHTML = `
-        <div class="ai-analysis-card">
+        <div class="ai-analysis-card" style="background: ${gradient}">
             <div class="text-center mb-4">
                 <h3 style="color: white; margin-bottom: 10px;">
                     <i class="fas fa-robot"></i> AI Flood Risk Analysis
@@ -611,9 +606,8 @@
     `;
         }
 
-
         document.addEventListener('DOMContentLoaded', () => {
-            getUserLocation(); // This will now call initializeAllData() once location is resolved
+            getUserLocation();
         });
     </script>
 </body>
