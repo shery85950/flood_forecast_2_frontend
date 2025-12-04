@@ -78,7 +78,7 @@ const mapUtils = {
 
         try {
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=pk`
             );
 
             if (!response.ok) {
@@ -110,22 +110,18 @@ const mapUtils = {
 
     // Get location suggestions for autocomplete
     getSuggestions: async (query) => {
-        if (!query || query.trim().length < 3) {
+        if (!query || query.trim().length < 2) {
             return [];
         }
 
         try {
-            // Add Pakistan context to improve local results
-            const searchQuery = `${query}, Pakistan`;
-
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/search?` +
                 `format=json&` +
-                `q=${encodeURIComponent(searchQuery)}&` +
-                `limit=15&` +  // Increased from 5 to 15 for more results
-                `addressdetails=1&` +
-                `countrycodes=pk&` +  // Prioritize Pakistan results
-                `featuretype=city,town,village,suburb,neighbourhood`  // Focus on populated places
+                `q=${encodeURIComponent(query)}&` +
+                `limit=20&` +
+                `countrycodes=pk&` +
+                `addressdetails=1`
             );
 
             if (!response.ok) {
@@ -134,25 +130,39 @@ const mapUtils = {
 
             const data = await response.json();
 
-            // Format and deduplicate results
+            // Format and deduplicate results - prioritize by type and importance
             const uniqueResults = [];
             const seen = new Set();
 
-            data.forEach(item => {
-                // Create a simpler display name for better readability
-                const parts = item.display_name.split(',');
-                let simpleName = parts.slice(0, 3).join(','); // Take first 3 parts
+            // Sort by importance (admin levels first, then other results)
+            const sortedData = data.sort((a, b) => {
+                const importanceA = parseFloat(a.importance || 0);
+                const importanceB = parseFloat(b.importance || 0);
+                return importanceB - importanceA;
+            });
 
-                // Avoid duplicates
+            sortedData.forEach(item => {
                 const key = `${item.lat},${item.lon}`;
-                if (!seen.has(key)) {
+                
+                if (!seen.has(key) && uniqueResults.length < 15) {
                     seen.add(key);
+                    
+                    // Create display name - remove duplicates in address parts
+                    const parts = item.display_name.split(',').map(p => p.trim());
+                    let displayName = parts[0]; // Start with first part (city/location name)
+                    
+                    // Add meaningful context (province/district) if available
+                    if (parts.length > 1) {
+                        displayName = parts.slice(0, 2).join(', ');
+                    }
+                    
                     uniqueResults.push({
-                        name: simpleName.trim(),
+                        name: displayName,
                         fullName: item.display_name,
                         lat: parseFloat(item.lat),
                         lng: parseFloat(item.lon),
-                        type: item.type || 'location'
+                        type: item.type || 'location',
+                        importance: parseFloat(item.importance || 0)
                     });
                 }
             });
