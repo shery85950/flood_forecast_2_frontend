@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -274,27 +274,45 @@
         const WEATHER_API_KEY = '5523bf8add464255b93210055252911';
         const WEATHER_API_BASE = 'https://api.weatherapi.com/v1';
         let userLocation = 'Lahore';
+        let locationResolved = false; // Flag to track if location has been resolved
 
         function getUserLocation() {
             if (navigator.geolocation) {
                 const timeout = setTimeout(() => {
-                    fetchWeatherData(userLocation);
-                }, 3000);
+                    console.log('[Location] Timeout - using default location:', userLocation);
+                    locationResolved = true;
+                    initializeAllData();
+                }, 5000); // Increased timeout to 5 seconds
 
                 navigator.geolocation.getCurrentPosition(
                     position => {
                         clearTimeout(timeout);
-                        fetchWeatherData(`${position.coords.latitude},${position.coords.longitude}`);
+                        userLocation = `${position.coords.latitude},${position.coords.longitude}`;
+                        console.log('[Location] User location obtained:', userLocation);
+                        locationResolved = true;
+                        initializeAllData();
                     },
                     error => {
                         clearTimeout(timeout);
-                        fetchWeatherData(userLocation);
+                        console.log('[Location] Geolocation error - using default:', userLocation);
+                        locationResolved = true;
+                        initializeAllData();
                     },
-                    { timeout: 3000, enableHighAccuracy: false }
+                    { timeout: 5000, enableHighAccuracy: false }
                 );
             } else {
-                fetchWeatherData(userLocation);
+                console.log('[Location] Geolocation not supported - using default:', userLocation);
+                locationResolved = true;
+                initializeAllData();
             }
+        }
+
+        // Main initialization function - called ONLY after location is resolved
+        function initializeAllData() {
+            console.log('[Init] Starting data initialization with location:', userLocation);
+            fetchWeatherData(userLocation);
+            fetchDbForecasts();
+            loadAIForecast(userLocation); // Pass location explicitly
         }
 
         async function fetchWeatherData(location) {
@@ -466,8 +484,8 @@
         });
 
 
-        // AI Forecast Analysis Functions
-        async function loadAIForecast() {
+        // AI Forecast Analysis Functions - NOW ACCEPTS LOCATION PARAMETER
+        async function loadAIForecast(location) {
             const container = document.getElementById('ai-forecast-analysis');
             container.innerHTML = `
         <div class="ai-analysis-card text-center">
@@ -478,7 +496,8 @@
     `;
 
             try {
-                const result = await analyzeWeeklyForecast(userLocation);
+                console.log('[AI Forecast] Loading forecast for location:', location);
+                const result = await analyzeWeeklyForecast(location);
                 if (!result.success) throw new Error(result.error || 'Analysis failed');
                 displayAIAnalysis(result);
             } catch (error) {
@@ -489,7 +508,7 @@
                     <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
                     <h4>AI Analysis Unavailable</h4>
                     <p class="text-muted">Unable to generate risk assessment. ${error.message}</p>
-                    <button onclick="loadAIForecast()" class="btn btn-primary mt-3">
+                    <button onclick="loadAIForecast('${location}')" class="btn btn-primary mt-3">
                         <i class="fas fa-redo"></i> Retry
                     </button>
                 </div>
@@ -594,9 +613,7 @@
 
 
         document.addEventListener('DOMContentLoaded', () => {
-            getUserLocation();
-            fetchDbForecasts();
-            loadAIForecast();
+            getUserLocation(); // This will now call initializeAllData() once location is resolved
         });
     </script>
 </body>
