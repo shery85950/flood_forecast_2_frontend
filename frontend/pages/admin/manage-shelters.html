@@ -121,7 +121,23 @@
                 <tr>
                     <td>${shelter.name}</td>
                     <td>${shelter.address}</td>
-                    <td>${shelter.capacity}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+                            <button class="action-btn" onclick="updateCapacity(${shelter.id}, -10)" title="Decrease by 10" style="background: #e74c3c; padding: 5px 8px;">
+                                <i class="fas fa-minus"></i> 10
+                            </button>
+                            <button class="action-btn" onclick="updateCapacity(${shelter.id}, -1)" title="Decrease by 1" style="background: #f39c12; padding: 5px 10px;">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <span style="font-weight: bold; min-width: 60px; text-align: center; font-size: 1.1rem;">${shelter.capacity}</span>
+                            <button class="action-btn" onclick="updateCapacity(${shelter.id}, 1)" title="Increase by 1" style="background: #27ae60; padding: 5px 10px;">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="action-btn" onclick="updateCapacity(${shelter.id}, 10)" title="Increase by 10" style="background: #2ecc71; padding: 5px 8px;">
+                                <i class="fas fa-plus"></i> 10
+                            </button>
+                        </div>
+                    </td>
                     <td>${shelter.contactNumber}</td>
                     <td>
                         <button class="action-btn btn-edit" onclick="editShelter(${shelter.id})"><i class="fas fa-edit"></i></button>
@@ -158,6 +174,19 @@
                 utils.showToast('Failed to add shelter', 'error');
             }
         });
+
+
+        // Update Capacity
+        async function updateCapacity(id, change) {
+            try {
+                await api.updateShelterCapacity(id, change);
+                utils.showToast(`Capacity ${change > 0 ? 'increased' : 'decreased'} by ${Math.abs(change)}`, 'success');
+                fetchShelters();
+            } catch (error) {
+                console.error('Error updating capacity:', error);
+                utils.showToast('Failed to update capacity', 'error');
+            }
+        }
 
         // Delete Shelter
         async function deleteShelter(id) {
