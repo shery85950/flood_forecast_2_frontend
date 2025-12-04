@@ -86,27 +86,42 @@ async function loadRiverData() {
  * @returns {Object|null} Latest river level data
  */
 function getLatestRiverLevel(barrage) {
-    if (!riverData || riverData.length === 0) return null;
+    if (!riverData || riverData.length === 0) {
+        console.warn('[River Data] No river data loaded');
+        return null;
+    }
     
     // Find latest daily data entry (first entry is most recent)
     const entry = riverData[0];
+    console.log('[River Data] Latest entry:', entry);
+    
     if (entry.stations && entry.stations['INDUS RIVER SYSTEM AUTHORITY']) {
         const stationData = entry.stations['INDUS RIVER SYSTEM AUTHORITY'];
+        console.log('[River Data] Station data keys:', Object.keys(stationData));
         
         // Get level based on barrage
         const levelKey = `${barrage}_LEVEL`;
         const inflowKey = `${barrage}_MEAN_INFLOW`;
         const outflowKey = `${barrage}_MEAN_OUTFLOW`;
         
-        if (stationData[levelKey]) {
-            return {
+        console.log('[River Data] Looking for keys:', levelKey, inflowKey, outflowKey);
+        
+        if (stationData[levelKey] !== undefined) {
+            const riverLevelData = {
                 date: entry.date,
                 level: stationData[levelKey],
                 inflow: stationData[inflowKey] || 'N/A',
                 outflow: stationData[outflowKey] || 'N/A',
                 barrage: barrage
             };
+            console.log('[River Data] Found river level:', riverLevelData);
+            return riverLevelData;
+        } else {
+            console.warn('[River Data] Could not find level key:', levelKey);
+            console.warn('[River Data] Available keys:', Object.keys(stationData));
         }
+    } else {
+        console.warn('[River Data] No station data found');
     }
     return null;
 }
@@ -149,16 +164,38 @@ function assessRiverRisk(barrage, currentLevel) {
 }
 
 /**
- * Extract city name from location string
+ * Extract city name from location string or determine from coordinates
  * @param {string} location - Location (coordinates or city name)
  * @returns {string} City name
  */
 function extractCityName(location) {
-    // If it's coordinates, try to reverse geocode (basic implementation)
+    // If it's coordinates, determine city based on coordinates
     if (location.includes(',')) {
-        // For now, return the location as-is
-        // In a real app, you'd use reverse geocoding API
-        return 'Unknown';
+        const [lat, lon] = location.split(',').map(parseFloat);
+        
+        // Rawalpindi coordinates: 33.6131, 73.0729
+        if (lat > 33.5 && lat < 33.7 && lon > 73.0 && lon < 73.2) {
+            console.log('[Location] Coordinates identified as Rawalpindi');
+            return 'Rawalpindi';
+        }
+        // Islamabad coordinates: 33.7298, 73.1786
+        if (lat > 33.6 && lat < 33.8 && lon > 73.0 && lon < 73.3) {
+            console.log('[Location] Coordinates identified as Islamabad');
+            return 'Islamabad';
+        }
+        // Lahore coordinates: 31.5204, 74.3587
+        if (lat > 31.4 && lat < 31.7 && lon > 74.2 && lon < 74.5) {
+            console.log('[Location] Coordinates identified as Lahore');
+            return 'Lahore';
+        }
+        // Karachi coordinates: 24.8607, 67.0011
+        if (lat > 24.7 && lat < 25.0 && lon > 66.9 && lon < 67.2) {
+            console.log('[Location] Coordinates identified as Karachi');
+            return 'Karachi';
+        }
+        
+        console.warn('[Location] Coordinates not matched to any city, using Rawalpindi as default');
+        return 'Rawalpindi'; // Default to Rawalpindi
     }
     return location;
 }
