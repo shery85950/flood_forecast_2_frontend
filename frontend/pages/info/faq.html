@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - FloodResponse</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .accordion-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background-color: #f8f9fa;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .accordion-header:hover {
+            background-color: #e9ecef;
+        }
+
+        .accordion-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+            background-color: white;
+        }
+
+        .accordion-content.active {
+            padding: 20px;
+            max-height: 500px;
+        }
+
+        .icon-rotate {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-header.active .icon-rotate {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-water"></i>
+                    FloodResponse
+                </div>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/forecast">Forecasts</a></li>
+                    <li><a href="/alerts">Alerts</a></li>
+                    <li><a href="/shelters">Shelters</a></li>
+                    <li><a href="/helpline">Helpline</a></li>
+                    <li><a href="/report" class="btn btn-primary">Report Emergency</a></li>
+                </ul>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container mt-5 mb-5">
+        <div class="text-center mb-5">
+            <h1>Frequently Asked Questions</h1>
+            <p class="text-muted">Find answers to common questions about flood safety and using this system.</p>
+        </div>
+
+        <div style="max-width: 800px; margin: 0 auto;">
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    How do I report an emergency?
+                    <i class="fas fa-chevron-down icon-rotate"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>You can report an emergency by clicking on the "Report Emergency" button in the navigation menu.
+                        Fill out the form with your location and details of the situation. If it is a life-threatening
+                        emergency, please call 1122 immediately.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    How can I find the nearest shelter?
+                    <i class="fas fa-chevron-down icon-rotate"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>Go to the "Shelters" page and use the map to locate shelters near you. You can also click the
+                        "Use My Location" button to automatically find the closest safe locations.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    Are the flood forecasts accurate?
+                    <i class="fas fa-chevron-down icon-rotate"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>Our forecasts are based on data from the Meteorological Department and real-time river monitoring
+                        stations. While we strive for high accuracy, weather conditions can change rapidly. Always stay
+                        updated with the latest alerts.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    How do I subscribe to alerts?
+                    <i class="fas fa-chevron-down icon-rotate"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>Currently, alerts are broadcasted on the website. We are working on an SMS and email subscription
+                        service which will be available soon.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="copyright">
+                <p>&copy; 2025 Flood Forecasting & Response System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const headers = document.querySelectorAll('.accordion-header');
+        headers.forEach(header => {
+            header.addEventListener('click', () => {
+                header.classList.toggle('active');
+                const content = header.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

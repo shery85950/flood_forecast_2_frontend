@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flood Forecasting & Response System</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #0061f2 0%, #6900f2 100%);
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), #0056b3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .card-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .btn {
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 60px 0;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-water"></i>
+                    FloodResponse
+                </div>
+                <ul class="nav-links">
+                    <li><a href="/" class="active">Home</a></li>
+                    <li><a href="/forecast">Forecasts</a></li>
+                    <li><a href="/alerts">Alerts</a></li>
+                    <li><a href="/shelters">Shelters</a></li>
+                    <li><a href="/helpline">Helpline</a></li>
+                    <li><a href="/report" class="btn btn-primary">Report Emergency</a></li>
+                </ul>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container" style="position: relative; z-index: 1;">
+            <h1 style="color: white;">Flood Forecasting & Response System</h1>
+            <p style="color: rgba(255,255,255,0.95); max-width: 700px; margin: 0 auto 30px;">Real-time flood warnings,
+                shelter information, and emergency response coordination for safer communities.</p>
+            <div class="mt-3" style="animation: fadeInUp 1.2s ease-out;">
+                <a href="/forecast" class="btn btn-primary"
+                    style="background: white; color: var(--primary-color); font-weight: 600; padding: 14px 32px; margin: 0 10px;">Check
+                    Forecast</a>
+                <a href="/shelters" class="btn btn-outline"
+                    style="border: 2px solid white; color: white; font-weight: 600; padding: 14px 32px; margin: 0 10px;">Find
+                    Shelter</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="container">
+            <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="stat-card">
+                    <span class="stat-number"><i class="fas fa-chart-line"></i> 24/7</span>
+                    <div class="stat-label">Real-time Monitoring</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number"><i class="fas fa-bell"></i> Live</span>
+                    <div class="stat-label">Alert System</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number"><i class="fas fa-map-marked-alt"></i> GPS</span>
+                    <div class="stat-label">Location Tracking</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number"><i class="fas fa-users"></i> Fast</span>
+                    <div class="stat-label">Emergency Response</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="container mt-5">
+        <div class="text-center" style="margin-bottom: 50px;">
+            <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 15px;">Quick Access</h2>
+            <p class="text-muted" style="font-size: 1.1rem;">Access critical information and services instantly</p>
+        </div>
+
+        <div class="card-grid">
+            <div class="card text-center" style="padding: 40px 30px;">
+                <div class="card-icon"><i class="fas fa-cloud-showers-heavy"></i></div>
+                <h3 style="font-weight: 600; margin-bottom: 15px;">Flood Forecast</h3>
+                <p style="color: #666; margin-bottom: 20px;">View real-time river levels and rainfall predictions for
+                    your area.</p>
+                <a href="/forecast" class="btn btn-secondary mt-2" style="font-weight: 600;">View Forecast</a>
+            </div>
+
+            <div class="card text-center" style="padding: 40px 30px;">
+                <div class="card-icon"><i class="fas fa-bell"></i></div>
+                <h3 style="font-weight: 600; margin-bottom: 15px;">Early Warnings</h3>
+                <p style="color: #666; margin-bottom: 20px;">Get instant alerts about potential flood risks and
+                    evacuation orders.</p>
+                <a href="/alerts" class="btn btn-secondary mt-2" style="font-weight: 600;">View Alerts</a>
+            </div>
+
+            <div class="card text-center" style="padding: 40px 30px;">
+                <div class="card-icon"><i class="fas fa-home"></i></div>
+                <h3 style="font-weight: 600; margin-bottom: 15px;">Shelter Finder</h3>
+                <p style="color: #666; margin-bottom: 20px;">Locate nearby safe shelters and evacuation routes on the
+                    map.</p>
+                <a href="/shelters" class="btn btn-secondary mt-2" style="font-weight: 600;">Find Shelter</a>
+            </div>
+
+            <div class="card text-center" style="padding: 40px 30px;">
+                <div class="card-icon"><i class="fas fa-phone-alt"></i></div>
+                <h3 style="font-weight: 600; margin-bottom: 15px;">Emergency Helpline</h3>
+                <p style="color: #666; margin-bottom: 20px;">Access directory of emergency contacts and rescue teams.
+                </p>
+                <a href="/helpline" class="btn btn-secondary mt-2" style="font-weight: 600;">Get Help</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="container mb-5">
+        <div class="card" style="border-left: 4px solid var(--danger-color); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+            <div class="card-header"
+                style="border-bottom: 2px solid #f0f0f0; padding-bottom: 20px; margin-bottom: 20px;">
+                <h3 style="display: flex; align-items: center; gap: 10px; font-weight: 700;">
+                    <i class="fas fa-exclamation-circle text-danger"></i> Recent Critical Alerts
+                </h3>
+            </div>
+            <div id="recent-alerts">
+                <!-- Alerts will be loaded here via JS -->
+                <div class="loader-container">
+                    <div class="loader"></div>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <a href="/alerts" class="btn btn-outline"
+                    style="color: var(--primary-color); border-color: var(--primary-color);">View All Alerts</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>FloodResponse</h3>
+                    <p>A centralized disaster response system for flood management and community safety.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/login">Admin Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Emergency Contact</h3>
+                    <p><i class="fas fa-phone"></i> 1122 (Rescue)</p>
+                    <p><i class="fas fa-envelope"></i> help@floodresponse.org</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Flood Forecasting & Response System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/api.js"></script>
+    <script>
+        // Simple script to load recent alerts (mock implementation for now)
+        document.addEventListener('DOMContentLoaded', async () => {
+            const alertsContainer = document.getElementById('recent-alerts');
+
+            try {
+                // In a real scenario, we would fetch from API
+                // const alerts = await api.getActiveAlerts();
+
+                // Mock data for display
+                const alerts = [
+                    { title: 'High Flood Warning - River Indus', severity: 'Critical', region: 'Sindh', time: '2 hours ago' },
+                    { title: 'Heavy Rainfall Alert', severity: 'Warning', region: 'Punjab', time: '5 hours ago' }
+                ];
+
+                let html = '';
+                alerts.forEach(alert => {
+                    const badgeClass = alert.severity === 'Critical' ? 'alert-critical' : 'alert-warning';
+                    html += `
+                        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="margin-bottom: 5px;">${alert.title}</h4>
+                                <p class="text-muted"><small><i class="fas fa-map-marker-alt"></i> ${alert.region} &bull; <i class="far fa-clock"></i> ${alert.time}</small></p>
+                            </div>
+                            <span class="alert-badge ${badgeClass}">${alert.severity}</span>
+                        </div>
+                    `;
+                });
+                alertsContainer.innerHTML = html;
+            } catch (error) {
+                alertsContainer.innerHTML = '<p class="text-center text-danger">Failed to load alerts.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>

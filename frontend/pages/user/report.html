@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Emergency - FloodResponse</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .form-control:focus {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1) !important;
+            outline: none;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4) !important;
+        }
+
+        input[type="file"]:hover {
+            border-color: #dc3545 !important;
+            background-color: #fff5f5;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-water"></i>
+                    FloodResponse
+                </div>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/forecast">Forecasts</a></li>
+                    <li><a href="/alerts">Alerts</a></li>
+                    <li><a href="/shelters">Shelters</a></li>
+                    <li><a href="/helpline">Helpline</a></li>
+                    <li><a href="/report" class="active btn btn-primary">Report Emergency</a></li>
+                </ul>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero"
+        style="padding: 60px 0; background: linear-gradient(rgba(220, 53, 69, 0.9), rgba(100, 0, 0, 0.8)), url('../../images/hero-bg.jpg');">
+        <div class="container">
+            <h1>Report an Emergency</h1>
+            <p>Your report helps us coordinate rescue efforts efficiently.</p>
+        </div>
+    </section>
+
+    <div class="container mt-5">
+        <div class="row" style="display: flex; flex-wrap: wrap; gap: 40px;">
+            <!-- Form Section -->
+            <div style="flex: 2; min-width: 300px;">
+                <div class="card" style="border-top: 4px solid #dc3545; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
+                    <div class="text-center mb-4" style="padding-bottom: 20px; border-bottom: 2px solid #f0f0f0;">
+                        <div
+                            style="width: 70px; height: 70px; background: linear-gradient(135deg, #dc3545, #c82333); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: white;"></i>
+                        </div>
+                        <h2 style="color: #dc3545; font-weight: 700; margin-bottom: 8px;">Emergency Details</h2>
+                        <p class="text-muted" style="font-size: 0.95rem;">Please provide accurate information to help us
+                            respond quickly</p>
+                    </div>
+
+                    <form id="emergency-form">
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label for="name"
+                                style="font-weight: 600; color: #333; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-user" style="color: #dc3545;"></i> Your Name
+                            </label>
+                            <input type="text" id="name" class="form-control" required
+                                placeholder="Enter your full name"
+                                style="padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; transition: all 0.3s;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label for="phone"
+                                style="font-weight: 600; color: #333; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-phone" style="color: #dc3545;"></i> Contact Number
+                            </label>
+                            <input type="tel" id="phone" class="form-control" required placeholder="0300-1234567"
+                                style="padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; transition: all 0.3s;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label for="location"
+                                style="font-weight: 600; color: #333; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-map-marker-alt" style="color: #dc3545;"></i> Location
+                            </label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="location" class="form-control"
+                                    placeholder="Enter address, city, or landmark" required
+                                    style="padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; transition: all 0.3s; flex: 1;">
+                                <button type="button" class="btn btn-secondary" id="get-location-btn" title="Use GPS"
+                                    style="padding: 12px 20px; border-radius: 8px; display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+                                    <i class="fas fa-crosshairs"></i> GPS
+                                </button>
+                            </div>
+                            <input type="hidden" id="latitude">
+                            <input type="hidden" id="longitude">
+                            <small class="text-muted" style="display: block; margin-top: 6px;">
+                                <i class="fas fa-info-circle"></i> Tap GPS to automatically fetch your coordinates
+                            </small>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label for="type"
+                                style="font-weight: 600; color: #333; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-list" style="color: #dc3545;"></i> Emergency Type
+                            </label>
+                            <select id="type" class="form-control" required
+                                style="padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; transition: all 0.3s;">
+                                <option value="">Select Type...</option>
+                                <option value="Flood">🌊 Flood Water Entering Home</option>
+                                <option value="Medical">🏥 Medical Emergency</option>
+                                <option value="Rescue">🆘 Stranded / Need Rescue</option>
+                                <option value="Food">🍞 Food/Water Shortage</option>
+                                <option value="Other">📋 Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label for="description"
+                                style="font-weight: 600; color: #333; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-comment-alt" style="color: #dc3545;"></i> Description
+                            </label>
+                            <textarea id="description" class="form-control" rows="5"
+                                placeholder="Describe the situation, number of people affected, urgency level, etc."
+                                required
+                                style="padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; transition: all 0.3s; resize: vertical;"></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 30px;">
+                            <label
+                                style="font-weight: 600; color: #333; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-camera" style="color: #dc3545;"></i> Upload Photo (Optional)
+                            </label>
+                            <input type="file" class="form-control" accept="image/*"
+                                style="padding: 10px; border: 2px dashed #e0e0e0; border-radius: 8px; transition: all 0.3s;">
+                            <small class="text-muted" style="display: block; margin-top: 6px;">
+                                <i class="fas fa-info-circle"></i> Photos help us assess the situation better
+                            </small>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger"
+                            style="width: 100%; font-size: 1.2rem; padding: 16px; border-radius: 10px; font-weight: 600; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3); transition: all 0.3s;">
+                            <i class="fas fa-paper-plane"></i> Submit Emergency Report
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sidebar Info -->
+            <div style="flex: 1; min-width: 300px;">
+                <div class="card mb-4" style="border-left: 5px solid var(--danger-color);">
+                    <h3><i class="fas fa-phone-volume text-danger"></i> Immediate Danger?</h3>
+                    <p>If the situation is life-threatening, call the emergency helpline immediately.</p>
+                    <a href="tel:1122" class="btn btn-danger mt-2"
+                        style="display: block; text-align: center; font-size: 1.5rem;">
+                        <i class="fas fa-phone"></i> Call 1122
+                    </a>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-info-circle text-primary"></i> What happens next?</h3>
+                    <ul style="list-style: none; padding: 0; margin-top: 15px;">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> <strong>1. Received:</strong>
+                            Your report is logged in our system.</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> <strong>2. Verified:</strong>
+                            Admin verifies the details.</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> <strong>3. Action:</strong>
+                            Rescue teams are dispatched if necessary.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="copyright">
+                <p>&copy; 2025 Flood Forecasting & Response System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/api.js"></script>
+    <script>
+        document.getElementById('get-location-btn').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        document.getElementById('latitude').value = position.coords.latitude;
+                        document.getElementById('longitude').value = position.coords.longitude;
+                        document.getElementById('location').value = `Lat: ${position.coords.latitude}, Lng: ${position.coords.longitude}`;
+                        utils.showToast('Location fetched successfully', 'success');
+                    },
+                    (error) => {
+                        utils.showToast('Unable to retrieve location', 'error');
+                    }
+                );
+            } else {
+                utils.showToast('Geolocation not supported', 'error');
+            }
+        });
+
+        document.getElementById('emergency-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const reportData = {
+                reporterName: document.getElementById('name').value,
+                contactNumber: document.getElementById('phone').value,
+                location: document.getElementById('location').value,
+                latitude: document.getElementById('latitude').value ? parseFloat(document.getElementById('latitude').value) : null,
+                longitude: document.getElementById('longitude').value ? parseFloat(document.getElementById('longitude').value) : null,
+                emergencyType: document.getElementById('type').value,
+                description: document.getElementById('description').value,
+                status: 'Pending',
+                reportedAt: new Date().toISOString()
+            };
+
+            try {
+                await api.submitReport(reportData);
+                utils.showToast('Report submitted successfully! Help is on the way.', 'success');
+                e.target.reset();
+            } catch (error) {
+                console.error('Error submitting report:', error);
+                utils.showToast('Failed to submit report. Please try again.', 'error');
+            }
+        });
+    </script>
+</body>
+
+</html>
