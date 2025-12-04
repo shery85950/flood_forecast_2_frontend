@@ -232,9 +232,32 @@ async function analyzeWeeklyForecast(location) {
         const weatherData = await fetchWeeklyWeather(location);
 
         // Step 4: Generate AI analysis with river data context
-        const aiAnalysis = await generateWarningWithAI(weatherData, riverRiskData, riverInfo);
+        let aiAnalysis = await generateWarningWithAI(weatherData, riverRiskData, riverInfo);
 
-        // Step 5: Parse and return structured response
+        // Step 5: BLEND river risk with AI analysis if river data exists
+        if (riverRiskData && riverRiskData.riskLevel !== 'Low') {
+            console.log('[AI Agent] Blending river risk with AI analysis...');
+            
+            // If river risk is higher, increase the warning level
+            const riverScore = riverRiskData.score;
+            const aiScore = aiAnalysis.riskScore || 0;
+            const blendedScore = Math.max(riverScore, aiScore);
+            
+            // Update warning level based on blended score
+            if (blendedScore >= 70) {
+                aiAnalysis.warningLevel = 'High';
+                aiAnalysis.riskScore = blendedScore;
+                aiAnalysis.summary = `⚠️ HIGH FLOOD RISK: River level at Tarbela is ${riverRiskData.reason}. ${aiAnalysis.summary}`;
+            } else if (blendedScore >= 50) {
+                aiAnalysis.warningLevel = 'Moderate';
+                aiAnalysis.riskScore = blendedScore;
+                aiAnalysis.summary = `⚠️ MODERATE FLOOD RISK: ${riverRiskData.reason}. ${aiAnalysis.summary}`;
+            }
+            
+            console.log('[AI Agent] Blended analysis:', aiAnalysis);
+        }
+
+        // Step 6: Parse and return structured response
         return {
             success: true,
             location: weatherData.location,
@@ -307,6 +330,7 @@ async function fetchWeeklyWeather(location) {
  */
 async function generateWarningWithAI(weatherData, riverRiskData, riverInfo) {
     console.log('[AI Agent] Sending data to backend for AI analysis...');
+    console.log('[AI Agent] Including river risk data:', riverRiskData);
 
     // Prepare enhanced payload with river data
     const enhancedData = {
@@ -317,9 +341,15 @@ async function generateWarningWithAI(weatherData, riverRiskData, riverInfo) {
             riskScore: riverRiskData?.score || 0,
             reason: riverRiskData?.reason || 'No river data available',
             barrage: riverInfo?.barrage,
-            region: riverInfo?.region
+            region: riverInfo?.region,
+            level: riverRiskData?.level,
+            inflow: riverRiskData?.inflow,
+            outflow: riverRiskData?.outflow,
+            date: riverRiskData?.date
         }
     };
+
+    console.log('[AI Agent] Enhanced data being sent to backend:', enhancedData);
 
     const response = await fetch(AI_CONFIG.BACKEND_API_URL, {
         method: 'POST',
@@ -335,6 +365,7 @@ async function generateWarningWithAI(weatherData, riverRiskData, riverInfo) {
     }
 
     const analysisResult = await response.json();
+    console.log('[AI Agent] Backend AI response:', analysisResult);
     return parseAIResponse(analysisResult);
 }
 
