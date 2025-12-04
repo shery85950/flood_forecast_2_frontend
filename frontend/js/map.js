@@ -119,7 +119,7 @@ const mapUtils = {
                 `https://nominatim.openstreetmap.org/search?` +
                 `format=json&` +
                 `q=${encodeURIComponent(query)}&` +
-                `limit=20&` +
+                `limit=100&` +
                 `countrycodes=pk&` +
                 `addressdetails=1`
             );
@@ -174,3 +174,4 @@ const mapUtils = {
         }
     }
 };
+
