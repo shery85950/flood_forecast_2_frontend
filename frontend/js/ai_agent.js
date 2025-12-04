@@ -1,7 +1,7 @@
 /**
- * AI Weather Forecast Agent
- * Analyzes weekly weather forecasts and generates flood warning levels
- * using Backend AI Proxy
+ * Enhanced AI Weather Forecast Agent
+ * Analyzes weekly weather forecasts + river data and generates flood warning levels
+ * using Backend AI Proxy + IRSA River Data
  */
 
 const AI_CONFIG = {
@@ -10,27 +10,199 @@ const AI_CONFIG = {
     WEATHER_API_BASE: 'https://api.weatherapi.com/v1'
 };
 
+// River system mapping - cities to nearby barrages/rivers
+const CITY_RIVER_MAPPING = {
+    'Rawalpindi': { river: 'INDUS', barrage: 'TARBELA', region: 'Punjab' },
+    'Islamabad': { river: 'INDUS', barrage: 'TARBELA', region: 'Punjab' },
+    'Lahore': { river: 'INDUS', barrage: 'SUKKUR', region: 'Punjab' },
+    'Karachi': { river: 'INDUS', barrage: 'SUKKUR', region: 'Sindh' },
+    'Peshawar': { river: 'KABUL', barrage: 'NOWSHERA', region: 'KPK' },
+    'Quetta': { river: 'INDUS', barrage: 'GUDDU', region: 'Balochistan' },
+    'Multan': { river: 'INDUS', barrage: 'GUDDU', region: 'Punjab' },
+    'Sukkur': { river: 'INDUS', barrage: 'SUKKUR', region: 'Sindh' },
+    'Hyderabad': { river: 'INDUS', barrage: 'GUDDU', region: 'Sindh' },
+    'Faisalabad': { river: 'INDUS', barrage: 'TARBELA', region: 'Punjab' }
+};
+
+// River danger levels (in meters - thresholds based on IRSA historical data)
+// Tarbela data reference: Current range 1493-1501, Dead level: 1050, FSD level: ~1550
+const RIVER_DANGER_LEVELS = {
+    'TARBELA': { 
+        low: 1480,           // Normal operating level
+        moderate: 1500,      // Above normal, increased flow
+        high: 1515,          // High water, spillway operations likely
+        critical: 1540       // Critical level, severe flood risk
+    },
+    'SUKKUR': { 
+        low: 9,              // Normal level
+        moderate: 12,        // Moderate water level
+        high: 15,            // High water level
+        critical: 18         // Critical overflow risk
+    },
+    'GUDDU': { 
+        low: 8,              // Normal level
+        moderate: 11,        // Moderate water level
+        high: 14,            // High water level
+        critical: 17         // Critical overflow risk
+    },
+    'NOWSHERA': { 
+        low: 150,            // Normal level
+        moderate: 200,       // Moderate water level
+        high: 240,           // High water level
+        critical: 280        // Critical overflow risk
+    }
+};
+
+let riverData = null; // Will store the IRSA data
+
 /**
- * Main function to analyze weekly forecast and generate warnings
+ * Load and parse river data from JSON file
+ * @returns {Promise<Object>} Parsed river data
+ */
+async function loadRiverData() {
+    try {
+        if (riverData) return riverData; // Return cached data
+        
+        // Try to load from local file or API endpoint
+        const response = await fetch('/data/river_data.json');
+        if (!response.ok) {
+            console.warn('[River Data] Could not load river data');
+            return null;
+        }
+        
+        const data = await response.json();
+        riverData = data;
+        console.log('[River Data] Loaded successfully:', data.length, 'records');
+        return data;
+    } catch (error) {
+        console.warn('[River Data] Error loading river data:', error);
+        return null;
+    }
+}
+
+/**
+ * Get latest river level data for a specific barrage
+ * @param {string} barrage - Barrage name (e.g., 'TARBELA')
+ * @returns {Object|null} Latest river level data
+ */
+function getLatestRiverLevel(barrage) {
+    if (!riverData || riverData.length === 0) return null;
+    
+    // Find latest daily data entry
+    for (let i = 0; i < riverData.length; i++) {
+        const entry = riverData[i];
+        if (entry.stations && entry.stations['INDUS RIVER SYSTEM AUTHORITY']) {
+            const stationData = entry.stations['INDUS RIVER SYSTEM AUTHORITY'];
+            
+            // Match barrage in the data
+            if (stationData['INDUS@TARBELA KABUL@NOWSHERA\nLEVEL'] && barrage === 'TARBELA') {
+                return {
+                    date: entry.date,
+                    level: stationData['INDUS@TARBELA KABUL@NOWSHERA\nLEVEL'],
+                    inflow: stationData['MEANINFLOW'],
+                    outflow: stationData['MEANOUTFLOW'],
+                    barrage: 'TARBELA'
+                };
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * Assess river flood risk based on current level
+ * @param {string} barrage - Barrage name
+ * @param {number} currentLevel - Current river level
+ * @returns {Object} Risk assessment
+ */
+function assessRiverRisk(barrage, currentLevel) {
+    const thresholds = RIVER_DANGER_LEVELS[barrage];
+    if (!thresholds) {
+        return { riskLevel: 'Unknown', score: 0, reason: 'Barrage data not available' };
+    }
+    
+    let riskLevel = 'Low';
+    let score = 20;
+    let reason = 'River level is normal';
+    
+    if (currentLevel >= thresholds.critical) {
+        riskLevel = 'Critical';
+        score = 90;
+        reason = `River level is CRITICAL (${currentLevel} - above ${thresholds.critical})`;
+    } else if (currentLevel >= thresholds.high) {
+        riskLevel = 'High';
+        score = 70;
+        reason = `River level is HIGH (${currentLevel} - above ${thresholds.high})`;
+    } else if (currentLevel >= thresholds.moderate) {
+        riskLevel = 'Moderate';
+        score = 50;
+        reason = `River level is MODERATE (${currentLevel} - above ${thresholds.moderate})`;
+    } else if (currentLevel >= thresholds.low) {
+        riskLevel = 'Low';
+        score = 30;
+        reason = `River level is normal (${currentLevel})`;
+    }
+    
+    return { riskLevel, score, reason };
+}
+
+/**
+ * Extract city name from location string
+ * @param {string} location - Location (coordinates or city name)
+ * @returns {string} City name
+ */
+function extractCityName(location) {
+    // If it's coordinates, try to reverse geocode (basic implementation)
+    if (location.includes(',')) {
+        // For now, return the location as-is
+        // In a real app, you'd use reverse geocoding API
+        return 'Unknown';
+    }
+    return location;
+}
+
+/**
+ * Main function to analyze weekly forecast with river data integration
  * @param {string} location - Location name or coordinates
- * @returns {Promise<Object>} AI-generated forecast analysis
+ * @returns {Promise<Object>} AI-generated forecast analysis with river data
  */
 async function analyzeWeeklyForecast(location) {
     try {
         console.log(`[AI Agent] Starting weekly forecast analysis for: ${location}`);
 
-        // Step 1: Fetch 7-day weather forecast
+        // Load river data
+        await loadRiverData();
+
+        // Step 1: Extract city name and find nearest river
+        const cityName = extractCityName(location);
+        const riverInfo = CITY_RIVER_MAPPING[cityName];
+        let riverRiskData = null;
+
+        if (riverInfo) {
+            console.log(`[AI Agent] Found river mapping for ${cityName}:`, riverInfo);
+            
+            // Step 2: Get river level data
+            const riverLevel = getLatestRiverLevel(riverInfo.barrage);
+            if (riverLevel) {
+                riverRiskData = assessRiverRisk(riverInfo.barrage, riverLevel.level);
+                console.log(`[AI Agent] River risk assessment:`, riverRiskData);
+            }
+        }
+
+        // Step 3: Fetch 7-day weather forecast
         const weatherData = await fetchWeeklyWeather(location);
 
-        // Step 2: Generate AI analysis
-        const aiAnalysis = await generateWarningWithAI(weatherData);
+        // Step 4: Generate AI analysis with river data context
+        const aiAnalysis = await generateWarningWithAI(weatherData, riverRiskData, riverInfo);
 
-        // Step 3: Parse and return structured response
+        // Step 5: Parse and return structured response
         return {
             success: true,
             location: weatherData.location,
             forecast: weatherData.forecast,
             analysis: aiAnalysis,
+            riverData: riverRiskData,
+            riverInfo: riverInfo,
             timestamp: new Date().toISOString()
         };
     } catch (error) {
@@ -88,20 +260,34 @@ async function fetchWeeklyWeather(location) {
 }
 
 /**
- * Generate flood warning using Backend AI Proxy
+ * Generate flood warning using Backend AI Proxy with river data context
  * @param {Object} weatherData - Weather forecast data
+ * @param {Object} riverRiskData - River risk assessment
+ * @param {Object} riverInfo - River information
  * @returns {Promise<Object>} AI-generated analysis
  */
-async function generateWarningWithAI(weatherData) {
+async function generateWarningWithAI(weatherData, riverRiskData, riverInfo) {
     console.log('[AI Agent] Sending data to backend for AI analysis...');
 
-    // Call Backend API
+    // Prepare enhanced payload with river data
+    const enhancedData = {
+        ...weatherData,
+        riverData: {
+            included: !!riverRiskData,
+            riskLevel: riverRiskData?.riskLevel || 'Unknown',
+            riskScore: riverRiskData?.score || 0,
+            reason: riverRiskData?.reason || 'No river data available',
+            barrage: riverInfo?.barrage,
+            region: riverInfo?.region
+        }
+    };
+
     const response = await fetch(AI_CONFIG.BACKEND_API_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(weatherData)
+        body: JSON.stringify(enhancedData)
     });
 
     if (!response.ok) {
@@ -122,7 +308,6 @@ function parseAIResponse(response) {
     try {
         let parsed = response;
         if (typeof response === 'string') {
-            // Remove markdown code blocks if present
             let cleanResponse = response.trim();
             if (cleanResponse.startsWith('```')) {
                 cleanResponse = cleanResponse.replace(/```json\n?/g, '').replace(/```\n?/g, '');
@@ -130,23 +315,18 @@ function parseAIResponse(response) {
             parsed = JSON.parse(cleanResponse);
         }
 
-        // Validate required fields
         if (!parsed.warningLevel || !parsed.riskScore || !parsed.summary) {
             throw new Error('Missing required fields in AI response');
         }
 
-        // Ensure warning level is valid
         const validLevels = ['Low', 'Moderate', 'High', 'Critical'];
         if (!validLevels.includes(parsed.warningLevel)) {
-            parsed.warningLevel = 'Moderate'; // Default fallback
+            parsed.warningLevel = 'Moderate';
         }
 
         return parsed;
     } catch (error) {
         console.error('[AI Agent] Error parsing AI response:', error);
-        console.error('[AI Agent] Raw response:', response);
-
-        // Return fallback analysis
         return {
             warningLevel: 'Moderate',
             riskScore: 50,
@@ -196,6 +376,9 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         analyzeWeeklyForecast,
         getWarningColor,
-        getWarningIcon
+        getWarningIcon,
+        loadRiverData,
+        CITY_RIVER_MAPPING,
+        RIVER_DANGER_LEVELS
     };
 }
