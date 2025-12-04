@@ -247,11 +247,42 @@ async function analyzeWeeklyForecast(location) {
             if (blendedScore >= 70) {
                 aiAnalysis.warningLevel = 'High';
                 aiAnalysis.riskScore = blendedScore;
-                aiAnalysis.summary = `⚠️ HIGH FLOOD RISK: River level at Tarbela is ${riverRiskData.reason}. ${aiAnalysis.summary}`;
+                aiAnalysis.confidence = Math.min(95, aiAnalysis.confidence + 20);
+                aiAnalysis.summary = `⚠️ CRITICAL ALERT: River level at Tarbela Dam is dangerously HIGH (${riverRiskData.level}m). ${riverRiskData.reason}. Despite current dry weather, elevated river levels pose immediate flood risk to Rawalpindi. Authorities should increase vigilance and prepare contingency measures.`;
+                aiAnalysis.keyFactors = [
+                    `Tarbela water level is CRITICAL at ${riverRiskData.level}m`,
+                    'Water inflow: ' + (riverRiskData.inflow || 'N/A') + ' cusecs',
+                    'Water outflow: ' + (riverRiskData.outflow || 'N/A') + ' cusecs',
+                    'Immediate spillway operations may be needed',
+                    'Downstream communities at risk'
+                ];
+                aiAnalysis.recommendations = [
+                    '🚨 IMMEDIATE: Monitor Tarbela Dam water releases 24/7',
+                    '⚠️ Alert downstream communities (Rawalpindi, Islamabad)',
+                    '📢 Activate emergency response teams',
+                    '🏠 Prepare evacuation routes in flood-prone areas',
+                    '📡 Increase flood alert broadcasts',
+                    '👥 Coordinate with NDMA and provincial authorities'
+                ];
             } else if (blendedScore >= 50) {
                 aiAnalysis.warningLevel = 'Moderate';
                 aiAnalysis.riskScore = blendedScore;
-                aiAnalysis.summary = `⚠️ MODERATE FLOOD RISK: ${riverRiskData.reason}. ${aiAnalysis.summary}`;
+                aiAnalysis.confidence = Math.min(90, aiAnalysis.confidence + 15);
+                aiAnalysis.summary = `⚠️ MODERATE FLOOD RISK: River level at Tarbela is moderately elevated (${riverRiskData.level}m). ${riverRiskData.reason}. Monitor water levels closely as situation could escalate. Current weather forecast shows no rain, but underlying river risk remains.`;
+                aiAnalysis.keyFactors = [
+                    `Tarbela water level elevated at ${riverRiskData.level}m`,
+                    'Water inflow: ' + (riverRiskData.inflow || 'N/A') + ' cusecs',
+                    'Water outflow: ' + (riverRiskData.outflow || 'N/A') + ' cusecs',
+                    'Current dry weather reducing additional risk',
+                    'Monitor next 48-72 hours for changes'
+                ];
+                aiAnalysis.recommendations = [
+                    '📊 Monitor Tarbela water levels hourly',
+                    '📢 Issue precautionary flood advisories',
+                    '🔔 Keep emergency services on alert',
+                    '👥 Brief district administration',
+                    '📡 Maintain public information updates'
+                ];
             }
             
             console.log('[AI Agent] Blended analysis:', aiAnalysis);
